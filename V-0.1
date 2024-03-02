@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subject Grades Calculator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f2f2f2;
+    }
+    #container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        color: #333;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #666;
+    }
+    input[type="number"] {
+        width: 60px;
+        margin: 5px;
+        padding: 5px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        margin: 5px;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    .subject-field {
+        margin-bottom: 10px;
+    }
+    .subject-actions {
+        display: inline-block;
+        margin-left: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div id="container">
+    <h1>Subject Grades Calculator</h1>
+
+    <div id="subjectFields">
+        <!-- Dynamic subject fields will be added here -->
+    </div>
+
+    <button type="button" onclick="addSubject()">Add Subject</button>
+
+    <div id="gradeResults"></div>
+</div>
+
+<script>
+    let subjects = []; // Array to store subjects
+
+    // Function to add a subject field
+    function addSubject() {
+        const subjectName = prompt("Enter the subject name:");
+        if (!subjectName) return; // If subject name is empty or cancel is pressed
+        subjects.push({ name: subjectName, value: 0 }); // Add subject to array
+        displaySubjects(); // Refresh subject fields
+    }
+
+    // Function to remove a subject
+    function removeSubject(index) {
+        subjects.splice(index, 1); // Remove subject from array
+        displaySubjects(); // Refresh subject fields
+    }
+
+    // Function to update subject name
+    function updateSubjectName(index) {
+        const newName = prompt("Enter the new name for this subject:");
+        if (!newName) return; // If new name is empty or cancel is pressed
+        subjects[index].name = newName; // Update subject name in array
+        displaySubjects(); // Refresh subject fields
+    }
+
+    // Function to update subject value
+    function updateSubjectValue(index, value) {
+        subjects[index].value = value; // Update subject value in array
+        calculatePercentageAverage(); // Recalculate percentage average
+    }
+
+    // Function to calculate the percentage average
+    function calculatePercentageAverage() {
+        let totalGrades = 0;
+        let maxTotalGrades = 0;
+
+        subjects.forEach(subject => {
+            totalGrades += parseFloat(subject.value);
+            maxTotalGrades += 100; // Assuming each subject is out of 100
+        });
+
+        const percentageAverage = (totalGrades / maxTotalGrades) * 100;
+
+        document.getElementById("gradeResults").innerHTML = `<h2>Percentage Average: ${percentageAverage.toFixed(2)}%</h2>`;
+    }
+
+    // Function to display subject fields
+    function displaySubjects() {
+        const subjectFieldsDiv = document.getElementById("subjectFields");
+        subjectFieldsDiv.innerHTML = ""; // Clear previous fields
+
+        subjects.forEach((subject, index) => {
+            const fieldId = `subject_${index}`;
+            const fieldHtml = `
+                <div class="subject-field">
+                    <label for="${fieldId}">${subject.name}:</label>
+                    <input type="number" id="${fieldId}" min="0" max="100" value="${subject.value}" onchange="updateSubjectValue(${index}, this.value)">
+                    <div class="subject-actions">
+                        <button type="button" onclick="updateSubjectName(${index})">Rename</button>
+                        <button type="button" onclick="removeSubject(${index})">Remove</button>
+                    </div>
+                </div>
+            `;
+            subjectFieldsDiv.innerHTML += fieldHtml; // Add subject field
+        });
+    }
+</script>
+
+</body>
+</html>
